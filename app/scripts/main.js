@@ -16,14 +16,22 @@ var barData = [];
 (function() {
     SetDataOrdered();
     MakeGraph1();
+    MakeGraph2();
+    MakeGraph3();
+    MakeGraph4();
 })();
 
 function SetDataOrdered() {
 
+    barData = null;
     barData = [];
+
+    console.log('before rehash : ' + barData);
 
     barData = [ 0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,
                 95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0];
+
+    console.log('after rehash : ' + barData);
 }
 
 function SetDataRandom() {
@@ -34,7 +42,8 @@ function SetDataRandom() {
 
     for (var i=0; i < 41; i++){
     //for (var i=0; i < (Math.random() * 1000); i++){
-        barData.push( Math.random() * 1000);
+        barData.push( Math.round(( Math.random() * 1000)));
+
     }
     console.log('after rehash : ' + barData);
 }
@@ -71,7 +80,7 @@ function UpdateGraph1() {
         .style('fill', colors)
         .attr('width', xScale.rangeBand() - barOffset)
         .attr('height', function(d) {
-            console.log(yScale(d));
+            console.log('d : ' + d);
             return yScale(d);
         })
         .attr('x', function(d,i) {
