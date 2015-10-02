@@ -1,18 +1,88 @@
 
-// var barData = [ 05,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,
-// 				90,05, 25, 10, 70, 75, 70, 45, 65, 85, 15, 95, 40, 30, 100, 50,
-// 				85, 30, 60, 35, 80, 05, 55, 35, 20, 55, 100, 40, 10, 90, 15, 65,
-// 				20, 45, 75, 95, 80, 50, 25, 60 ];
+$(document).ready( function() {
+    $("input[name='data-type']").on("change", function() {
+        var foo = $("input[name='data-type']:checked").val();
+        if(foo == 'data-type-ordered'){
+            SetDataOrdered();
+        } else {
+            SetDataRandom();
+        }
+        UpdateGraph1(); //MakeGraph1();
+    })
+})
+
 var barData = [];
 
-(function(){
-    for (var i=0; i < (Math.random() * 1000); i++){
-        barData.push( Math.random() * 100);
-    }
-    console.log(i);
+(function() {
+    SetDataOrdered();
+    MakeGraph1();
 })();
 
-(function () {
+function SetDataOrdered() {
+
+    barData = [];
+
+    barData = [ 0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,
+                95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0];
+}
+
+function SetDataRandom() {
+
+    barData = [];
+
+    console.log('before rehash : ' + barData);
+
+    for (var i=0; i < 41; i++){
+    //for (var i=0; i < (Math.random() * 1000); i++){
+        barData.push( Math.random() * 1000);
+    }
+    console.log('after rehash : ' + barData);
+}
+
+function UpdateGraph1() {
+
+    d3.select('#graph1').data(barData);
+
+    var height = 400,
+        width = 600,
+        barWidth = 50,
+        barOffset = 0;
+
+    var colors = d3.scale.linear()
+        .domain([0, d3.max(barData)])
+        .domain([ 0, d3.max(barData) * 0.2, d3.max(barData) * 0.4,
+            d3.max(barData) * 0.6, d3.max(barData) * 0.8, d3.max(barData) ])
+        .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
+
+    var yScale = d3.scale.linear()
+        .domain([0, d3.max(barData)])
+        .range([0, height ])
+
+    var xScale = d3.scale.ordinal()
+        .domain(d3.range(0, barData.length))
+        .rangeBands([0, width ])
+
+    d3.select('#graph1').data(barData);
+
+    var svg = d3.select('#graph1').transition();
+
+    svg.selectAll('rect')
+        .duration(750)
+        .style('fill', colors)
+        .attr('width', xScale.rangeBand() - barOffset)
+        .attr('height', function(d) {
+            console.log(yScale(d));
+            return yScale(d);
+        })
+        .attr('x', function(d,i) {
+            return xScale(i) + barOffset/2  ;
+        })
+        .attr('y', function(d) {
+            return height - yScale(d);
+        })
+}
+
+function MakeGraph1() {
 
     var height = 400,
         width = 600,
@@ -36,7 +106,7 @@ var barData = [];
     d3.select('#graph1').append('svg')
         .attr('width', width)
         .attr('height', height)
-        .style('background', 'rgba(100, 50, 125, 0.3)' )
+        .style('background', '#003d60' )
         .selectAll('rect').data(barData)
         .enter().append('rect')
         .style('fill', colors)
@@ -50,9 +120,9 @@ var barData = [];
         .attr('y', function(d) {
             return height - yScale(d);
         })
-})();
+}
 
-(function () {
+function MakeGraph2 () {
 
     var height = 400,
         width = 600,
@@ -74,7 +144,7 @@ var barData = [];
     d3.select('#graph2').append('svg')
         .attr('width', width)
         .attr('height', height)
-        .style('background', 'rgba(100, 50, 125, 0.3)' )
+        .style('background', '#003d60' )
         .selectAll('rect').data(barData)
         .enter().append('rect')
         .style('fill', function(d,i) {
@@ -90,9 +160,9 @@ var barData = [];
         .attr('y', function(d) {
             return height - yScale(d);
         })
-})();
+}
 
-(function () {
+function MakeGraph3() {
 
     var height = 400,
         width = 600,
@@ -115,7 +185,7 @@ var barData = [];
     d3.select('#graph3').append('svg')
         .attr('width', width)
         .attr('height', height)
-        .style('background', 'rgba(100, 50, 125, 0.3)' )
+        .style('background', '#003d60' )
         .selectAll('rect').data(barData)
         .enter().append('rect')
         .style('fill', function(d,i) {
@@ -131,9 +201,9 @@ var barData = [];
         .attr('y', function(d) {
             return height - yScale(d);
         })
-})();
+}
 
-(function(){
+function MakeGraph4(){
 
     var w = 40,
         h = 300;
@@ -164,4 +234,4 @@ var barData = [];
         .attr("width", w)
         .attr("height", h)
         .style("fill", "url(#gradient)");
-})()
+}

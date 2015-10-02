@@ -1,5 +1,8 @@
 $icon-font-path: "../bower_components/bootstrap-sass/assets/fonts/bootstrap/";
 
+@import 'graphcolors';
+@import 'styles';
+
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 // endbower
@@ -91,3 +94,4 @@ body {
     border-bottom: 0;
   }
 }
+
