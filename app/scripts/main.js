@@ -13,11 +13,13 @@ $(document).ready( function() {
 
 // testdata defined in testdata.js
 // TODO create global namespace for external data
-var barData = testdata;
+//var barData = testdata;
+
+    var barData;
 
 (function() {
-    //SetDataOrdered();
-    MakeGraph1();
+    SetDataOrdered();
+    UpdateGraph1();
     MakeGraph2();
     MakeGraph3();
     MakeGraph4();
@@ -125,7 +127,7 @@ function MakeGraph1() {
             .style('fill', colors)
             .attr('width', xScale.rangeBand() - barOffset)
             .attr('height', function(d) {
-                return yScale(d.values[0][0]);
+                return yScale(d["values"]);
             })
             .attr('x', function(d,i) {
                 return xScale(i) + barOffset/2  ;

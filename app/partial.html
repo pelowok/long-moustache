@@ -1,0 +1,76 @@
+<html>
+<head>
+    <script ng-src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+    <script ng-src="http://nvd3-community.github.io/nvd3/build/nv.d3.js"></script>
+    <link href="http://nvd3-community.github.io/nvd3/build/nv.d3.css" rel="stylesheet" type="text/css">
+
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
+        svg {
+            display: block;
+        }
+        html, body, #chart1, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+        button {
+            margin: 2px;
+            margin-left: 70px;
+        }
+    </style>
+</head>
+
+<body>
+  <div ng-include src="'/static/partials/common-ticket-details.html'"></div>
+    <div>
+        <hr>
+    </div>
+
+
+    <div id="chart1" class='with-3d-shadow with-transitions'>
+        <svg> </svg>
+    </div>
+
+    <script>
+        var dat = ticket.charts.data
+        var testdata = dat.map(function(series) {
+                series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+                return series;
+            });
+        var chart;
+        nv.addGraph(function() {
+            chart = nv.models.linePlusBarChart()
+                .margin({top: 50, right: 60, bottom: 30, left: 70})
+                .legendLeftAxisHint(' (left axis)')
+                .legendRightAxisHint(' (right axis)')
+                .color(d3.scale.category10().range());
+            chart.xAxis.tickFormat(function(d) {
+                    return d3.time.format('%b %y')(new Date(d))
+                })
+                .showMaxMin(false);
+            chart.y1Axis.tickFormat(function(d) { return d3.format(',f')(d) + ' days' });
+            chart.y2Axis.tickFormat(function(d) { return d + '%' });
+            chart.bars.forceY([0]).padData(false);
+            chart.lines.forceY([0,100]).padData(false);
+            chart.x2Axis.tickFormat(function(d) {
+                return d3.time.format('%b %y')(new Date(d))
+            }).showMaxMin(false);
+            d3.select('#chart1 svg')
+                .datum(testdata)
+                .transition().duration(500).call(chart);
+            nv.utils.windowResize(chart.update);
+            chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+            chart.brushExtent(ticket.charts.focuslimits)
+            chart.update()
+            
+            return chart;
+        });
+    </script>
+  </div>
+
+</body>
+</html>

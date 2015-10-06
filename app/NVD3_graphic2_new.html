@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="http://nvd3-community.github.io/nvd3/build/nv.d3.css" rel="stylesheet" type="text/css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.2/d3.min.js" charset="utf-8"></script>
+    <script src="http://nvd3-community.github.io/nvd3/build/nv.d3.js"></script>
+
+    <style>
+        text {
+            font: 12px sans-serif;
+        }
+        svg {
+            display: block;
+        }
+        html, body, #chart1, svg {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+        button {
+            margin: 2px;
+            margin-left: 70px;
+        }
+    </style>
+</head>
+<body>
+
+<span>
+  <form id="form-data-type">
+      <span><a href="index.html" target="_self">Home</a></span>
+      <span><a href="NVD3_graphic2_new.html" target="_self">NVD3 graph (rp)</a></span>
+      <span><a href="D3_graphic_zp.html" target="_self">D3 graph (zp)</a></span>
+  </form>
+</span>
+
+<!--
+<div style="position:absolute; top: 0; left: 0;">
+    <button onclick="chart.focusEnable(!chart.focusEnable()); chart.update();">toggle focus</button>
+    <span style="color: #C60;">&lt;-- turn focus on or off!</span>
+</div>
+-->
+<div id="chart1" class='with-3d-shadow with-transitions'>
+    <svg> </svg>
+</div>
+
+<script>
+    var rpdata = [
+  {
+    "key": "Number of patches installed",
+    "bar": true,
+    "values": [
+      [1350792000000, null],
+      [1353420000000, null],
+      [1356048000000, null],
+      [1358676000000, null],
+      [1361304000000, null],
+      [1363932000000, null],
+      [1366560000000, 4.5714],
+      [1369188000000, 7.8208],
+      [1371816000000, 52.2625],
+      [1374444000000, 238.4054],
+      [1377072000000, 33.3703],
+      [1379700000000, 497.858],
+      [1382328000000, 3.0952],
+      [1384956000000, 9.6681],
+      [1387584000000, 3.2834],
+      [1390212000000, 18.85],
+      [1392840000000, 5.0772],
+      [1395468000000, 13.0183],
+      [1398096000000, 40.359],
+      [1400724000000, 94.9556],
+      [1403352000000, 6.239],
+      [1405980000000, 20.585],
+      [1408608000000, 4.6898],
+      [1411236000000, 7.619],
+      [1413864000000, 5.8857],
+      [1416492000000, 5.3578],
+      [1419120000000, 26.6535],
+      [1421748000000, 62.8566],
+      [1424376000000, 13.7438],
+      [1427004000000, 9.5719],
+      [1429632000000, 9.2163],
+      [1432260000000, 15.222],
+      [1434888000000, null],
+      [1437516000000, null],
+      [1440144000000, null],
+      [1442772000000, 12.0685],
+      [1445400000000, null]
+    ]
+  },
+  {
+    "key": "Rank vs. all MSPs",
+    "values": [
+      [1350792000000, null],
+      [1353420000000, null],
+      [1356048000000, null],
+      [1358676000000, null],
+      [1361304000000, null],
+      [1363932000000, null],
+      [1366560000000, 34.7],
+      [1369188000000, 17.9],
+      [1371816000000, 40.9],
+      [1374444000000, 98.6],
+      [1377072000000, 41.2],
+      [1379700000000, 99.9],
+      [1382328000000, 18.3],
+      [1384956000000, 56.7],
+      [1387584000000, 29.2],
+      [1390212000000, 31.5],
+      [1392840000000, 47.1],
+      [1395468000000, 45.6],
+      [1398096000000, 71],
+      [1400724000000, 77.8],
+      [1403352000000, 60.8],
+      [1405980000000, 55],
+      [1408608000000, 30.7],
+      [1411236000000, 23.1],
+      [1413864000000, 57.9],
+      [1416492000000, 41.2],
+      [1419120000000, 41],
+      [1421748000000, 55.9],
+      [1424376000000, 61.4],
+      [1427004000000, 65.5],
+      [1429632000000, 54.7],
+      [1432260000000, 81.2],
+      [1434888000000, null],
+      [1437516000000, null],
+      [1440144000000, null],
+      [1442772000000, 16.1],
+      [1445400000000, null]
+    ]
+  }
+].map(function(series) {
+            series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+            return series;
+        });
+    var chart;
+    nv.addGraph(function() {
+        chart = nv.models.linePlusBarChart()
+            .margin({top: 50, right: 60, bottom: 30, left: 70})
+            .legendLeftAxisHint(' (left axis)')
+            .legendRightAxisHint(' (right axis)')
+            .color(d3.scale.category10().range());
+        chart.xAxis.tickFormat(function(d) {
+                return d3.time.format('%b %y')(new Date(d))
+            })
+            .showMaxMin(false);
+        chart.y1Axis.tickFormat(function(d) { return d3.format(',f')(d) + ' days' });
+        chart.y2Axis.tickFormat(function(d) { return d + '%' });
+        chart.bars.forceY([0]).padData(false);
+        chart.lines.forceY([0,100]).padData(false);
+        chart.x2Axis.tickFormat(function(d) {
+            return d3.time.format('%b %y')(new Date(d))
+        }).showMaxMin(false);
+        d3.select('#chart1 svg')
+            .datum(rpdata)
+            .transition().duration(500).call(chart);
+        nv.utils.windowResize(chart.update);
+        chart.dispatch.on('stateChange', function(e) { nv.log('New State:', JSON.stringify(e)); });
+        chart.brushExtent([1.411236e+12,1.4454e+12])
+        chart.update()
+        
+        return chart;
+    });
+</script>
+</body>
+</html>
