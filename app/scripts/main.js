@@ -11,10 +11,12 @@ $(document).ready( function() {
     })
 })
 
-var barData = [];
+// testdata defined in testdata.js
+// TODO create global namespace for external data
+var barData = testdata;
 
 (function() {
-    SetDataOrdered();
+    //SetDataOrdered();
     MakeGraph1();
     MakeGraph2();
     MakeGraph3();
@@ -112,23 +114,46 @@ function MakeGraph1() {
         .domain(d3.range(0, barData.length))
         .rangeBands([0, width ])
 
+    var tempColor;
+
     d3.select('#graph1').append('svg')
         .attr('width', width)
         .attr('height', height)
         .style('background', '#003d60' )
         .selectAll('rect').data(barData)
         .enter().append('rect')
-        .style('fill', colors)
-        .attr('width', xScale.rangeBand() - barOffset)
-        .attr('height', function(d) {
-            return yScale(d);
+            .style('fill', colors)
+            .attr('width', xScale.rangeBand() - barOffset)
+            .attr('height', function(d) {
+                return yScale(d.values[0][0]);
+            })
+            .attr('x', function(d,i) {
+                return xScale(i) + barOffset/2  ;
+            })
+            .attr('y', function(d) {
+                return height - yScale(d);
+            })
+
+        .on('mouseover', function(d) {
+            tempColor = this.style.fill;
+            d3.select(this)
+                .style('opacity',.5)
+                .style('fill', 'orange')
         })
-        .attr('x', function(d,i) {
-            return xScale(i) + barOffset/2  ;
+
+        .on('mouseout', function(d) {
+            d3.select(this)
+                .style('opacity', 1)
+                .style('fill', tempColor)
         })
-        .attr('y', function(d) {
-            return height - yScale(d);
+
+        .on('click', function(d) {
+            console.log(d);
+            d3.select(this)
+                .style('opacity', 1)
+                .style('fill', tempColor)
         })
+
 }
 
 function MakeGraph2 () {
