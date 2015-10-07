@@ -1,133 +1,110 @@
 
+var CARDS = CARDS || [];
+
 $(document).ready( function() {
+
+    var pub;
+
+    // testdata defined in testdata.js
+    // TODO create global namespace for external data
+    //var barData = testdata;
+    var barData = d3.json('/scripts/testdata.json')
+
+    barData = barData.map(function(series) {
+            series.values = series.values.map(function(d) { return {x: d[0], y: d[1] } });
+            return series;
+        });
+
+    ////
+    //var barData = [];
+    //    d3.json('scripts/testdata.json', function(data){
+    //
+    //        for (values in data) {
+    //            barData.push(data[values].value)
+    //        }
+    //
+    //    })
+
+    //SetDataOrdered(barData);
+    MakeGraph1();
+    MakeGraph2();
+    MakeGraph3();
+    MakeGraph4();
+
     $("input[name='data-type']").on("change", function() {
         var foo = $("input[name='data-type']:checked").val();
+
         if(foo == 'data-type-ordered'){
             SetDataOrdered();
         } else {
             SetDataRandom();
         }
+
         UpdateGraph1(); //MakeGraph1();
     })
-})
 
-// testdata defined in testdata.js
-// TODO create global namespace for external data
-//var barData = testdata;
+    function SetDataOrdered() {
 
-    var barData;
+        barData = null;
+        barData = [];
 
-(function() {
-    SetDataOrdered();
-    UpdateGraph1();
-    MakeGraph2();
-    MakeGraph3();
-    MakeGraph4();
-})();
+        console.log('before rehash, d3.max : ' + d3.max(barData));
 
-function SetDataOrdered() {
+        barData = [ 0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,
+                    95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0];
 
-    barData = null;
-    barData = [];
-
-    console.log('before rehash : ' + barData);
-
-    barData = [ 0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100,
-                95,90,85,80,75,70,65,60,55,50,45,40,35,30,25,20,15,10,5,0];
-
-    console.log('after rehash : ' + barData);
-}
-
-function SetDataRandom() {
-
-    barData = [];
-
-    console.log('before rehash : ' + barData);
-
-    for (var i=0; i < 41; i++){
-    //for (var i=0; i < (Math.random() * 1000); i++){
-        barData.push( Math.round(( Math.random() * 1000)));
-
+        console.log('after rehash, d3.max : ' + d3.max(barData));
     }
-    console.log('after rehash : ' + barData);
-}
 
-function UpdateGraph1() {
+    function SetDataRandom() {
 
-    d3.select('#graph1').data(barData);
+        //barData = [];
 
-    var height = 400,
-        width = 600,
-        barWidth = 50,
-        barOffset = 0;
+        console.log('before rehash, d3.max : ' + d3.max(barData));
 
-    var colors = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .domain([ 0, d3.max(barData) * 0.2, d3.max(barData) * 0.4,
-            d3.max(barData) * 0.6, d3.max(barData) * 0.8, d3.max(barData) ])
-        .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
+        for (var i=0; i < 41; i++){
+        //for (var i=0; i < (Math.random() * 1000); i++){
+            barData.push( Math.round(( Math.random() * 1000)));
 
-    var yScale = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .range([0, height ])
+        }
+        console.log('after rehash, d3.max : ' + d3.max(barData));
+    }
 
-    var xScale = d3.scale.ordinal()
-        .domain(d3.range(0, barData.length))
-        .rangeBands([0, width ])
+    function UpdateGraph1() {
 
-    d3.select('#graph1').data(barData);
+        console.log('UpdateGraph1 function executed with : ' + barData)
 
-    var svg = d3.select('#graph1').transition();
+        var height = 400,
+            width = 600,
+            barWidth = 50,
+            barOffset = 0;
 
-    svg.selectAll('rect')
-        .duration(750)
-        .style('fill', colors)
-        .attr('width', xScale.rangeBand() - barOffset)
-        .attr('height', function(d) {
-            console.log('d : ' + d);
-            return yScale(d);
-        })
-        .attr('x', function(d,i) {
-            return xScale(i) + barOffset/2  ;
-        })
-        .attr('y', function(d) {
-            return height - yScale(d);
-        })
-}
+        var colors = d3.scale.linear()
+            .domain([ 0, d3.max(barData)])
+            .range(['#FF0000', '#0000FF'])  //'#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
+            .domain([ 0, d3.max(barData) * 0.2, d3.max(barData) * 0.4,
+                d3.max(barData) * 0.6, d3.max(barData) * 0.8, d3.max(barData) ])
+            .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
 
-function MakeGraph1() {
+        var yScale = d3.scale.linear()
+            .domain([0, d3.max(barData)])
+            .range([0, height ])
 
-    var height = 400,
-        width = 600,
-        barWidth = 50,
-        barOffset = 0;
+        var xScale = d3.scale.ordinal()
+            .domain(d3.range(0, barData.length))
+            .rangeBands([0, width ])
 
-    var colors = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .domain([ 0, d3.max(barData) * 0.2, d3.max(barData) * 0.4,
-            d3.max(barData) * 0.6, d3.max(barData) * 0.8, d3.max(barData) ])
-        .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
+        var graph1 = d3.select('#graph1').transition();
 
-    var yScale = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .range([0, height ])
+        var svg = graph1.selectAll('rect')
+            .data(barData);
 
-    var xScale = d3.scale.ordinal()
-        .domain(d3.range(0, barData.length))
-        .rangeBands([0, width ])
-
-    var tempColor;
-
-    d3.select('#graph1').append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .style('background', '#003d60' )
-        .selectAll('rect').data(barData)
-        .enter().append('rect')
+        svg.exit().remove();
+        svg.enter().append("rect")
             .style('fill', colors)
             .attr('width', xScale.rangeBand() - barOffset)
             .attr('height', function(d) {
-                return yScale(d["values"]);
+                return yScale(d);
             })
             .attr('x', function(d,i) {
                 return xScale(i) + barOffset/2  ;
@@ -136,138 +113,222 @@ function MakeGraph1() {
                 return height - yScale(d);
             })
 
-        .on('mouseover', function(d) {
-            tempColor = this.style.fill;
-            d3.select(this)
-                .style('opacity',.5)
-                .style('fill', 'orange')
-        })
+            .on('mouseover', function(d) {
+                tempColor = this.style.fill;
+                d3.select(this)
+                    .style('opacity',.5)
+                    .style('fill', 'orange')
+            })
 
-        .on('mouseout', function(d) {
-            d3.select(this)
-                .style('opacity', 1)
-                .style('fill', tempColor)
-        })
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .style('opacity', 1)
+                    .style('fill', tempColor)
+            })
 
-        .on('click', function(d) {
-            console.log(d);
-            d3.select(this)
-                .style('opacity', 1)
-                .style('fill', tempColor)
-        })
+            .on('click', function(d) {
+                console.log(d);
+                d3.select(this)
+                    .style('opacity', 1)
+                    .style('fill', tempColor)
+            })
 
-}
+            .duration(750)
+            .style('fill', colors)
+            .attr('d', barData)
+            .attr('width', xScale.rangeBand() - barOffset)
+            .attr('height', function(barData) {
+                return yScale(barData);
+            })
+            .attr('x', function(barData,index) {
+                return xScale(index) + barOffset/2  ;
+            })
+            .attr('y', function(barData) {
+                return height - yScale(barData);
+            })
+    }
 
-function MakeGraph2 () {
+    function MakeGraph1() {
 
-    var height = 400,
-        width = 600,
-        barWidth = 50,
-        barOffset = 0;
+        var height = 400,
+            width = 600,
+            barWidth = 50,
+            barOffset = 0;
 
-    var colors = d3.scale.linear()
-        .domain([0, barData.length])
-        .range(['#FF0000', '#0000FF'])
+        var colors = d3.scale.linear()
+            .domain([0, d3.max(barData)])
+            .domain([ 0, d3.max(barData) * 0.2, d3.max(barData) * 0.4,
+                d3.max(barData) * 0.6, d3.max(barData) * 0.8, d3.max(barData) ])
+            .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
 
-    var yScale = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .range([0, height ])
+        var yScale = d3.scale.linear()
+            .domain([0, d3.max(barData)])
+            .range([0, height ])
 
-    var xScale = d3.scale.ordinal()
-        .domain(d3.range(0, barData.length))
-        .rangeBands([0, width ])
+        var xScale = d3.scale.ordinal()
+            .domain(d3.range(0, barData.length))
+            .rangeBands([0, width ])
 
-    d3.select('#graph2').append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .style('background', '#003d60' )
-        .selectAll('rect').data(barData)
-        .enter().append('rect')
-        .style('fill', function(d,i) {
-            return colors(i);
-        })
-        .attr('width', xScale.rangeBand() - barOffset)
-        .attr('height', function(d) {
-            return yScale(d);
-        })
-        .attr('x', function(d,i) {
-            return xScale(i) + barOffset/2  ;
-        })
-        .attr('y', function(d) {
-            return height - yScale(d);
-        })
-}
-
-function MakeGraph3() {
-
-    var height = 400,
-        width = 600,
-        barWidth = 50,
-        barOffset = 0;
-
-    var colors = d3.scale.linear()
-        .domain([ 0, barData.length * 0.2, barData.length * 0.4,
-            barData.length * 0.6, barData.length * 0.8, barData.length ])
-        .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
-
-    var yScale = d3.scale.linear()
-        .domain([0, d3.max(barData)])
-        .range([0, height ])
-
-    var xScale = d3.scale.ordinal()
-        .domain(d3.range(0, barData.length))
-        .rangeBands([0, width ])
-
-    d3.select('#graph3').append('svg')
-        .attr('width', width)
-        .attr('height', height)
-        .style('background', '#003d60' )
-        .selectAll('rect').data(barData)
-        .enter().append('rect')
-        .style('fill', function(d,i) {
-            return colors(i);
-        })
-        .attr('width', xScale.rangeBand() - barOffset)
-        .attr('height', function(d) {
-            return yScale(d);
-        })
-        .attr('x', function(d,i) {
-            return xScale(i) + barOffset/2  ;
-        })
-        .attr('y', function(d) {
-            return height - yScale(d);
-        })
-}
-
-function MakeGraph4(){
-
-    var w = 40,
-        h = 300;
-
-    var svg = d3.select("#graph4").append("svg:svg")
-        .attr("width", w)
-        .attr("height", h);
-
-    var gradient = svg.append("svg:defs")
-        .append("svg:linearGradient")
-        .attr("id", "gradient")
-        .attr("y1", "100%")
-        .attr("y2", "0%")
-        .attr("spreadMethod", "pad");
-
-    gradient.append("svg:stop")
-        .attr("offset", "50%")
-        .attr("stop-color", "#0079c0")
-        .attr("stop-opacity",0.5);
-
-    gradient.append("svg:stop")
-        .attr("offset", "100%")
-        .attr("stop-color", "#FFFFFF")
-        .attr("stop-opacity",0.1);
+        var tempColor;
 
 
-    svg.append("svg:rect")
-        .attr("width", w)
-        .attr("height", h)
-        .style("fill", "url(#gradient)");
-}
+
+        d3.select('#graph1').append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .style('background', '#003d60' )
+            .selectAll('rect').data(barData)
+            .enter().append('rect')
+                .style('fill', colors)
+                .attr('width', xScale.rangeBand() - barOffset)
+                .attr('height', function(d) {
+                    return yScale(d);
+                })
+                .attr('x', function(d,i) {
+                    return xScale(i) + barOffset/2  ;
+                })
+                .attr('y', function(d) {
+                    return height - yScale(d);
+                })
+
+            .on('mouseover', function(d) {
+                tempColor = this.style.fill;
+                d3.select(this)
+                    .style('opacity',.5)
+                    .style('fill', 'orange')
+            })
+
+            .on('mouseout', function(d) {
+                d3.select(this)
+                    .style('opacity', 1)
+                    .style('fill', tempColor)
+            })
+
+            .on('click', function(d) {
+                console.log(d);
+                d3.select(this)
+                    .style('opacity', 1)
+                    .style('fill', tempColor)
+            })
+
+    }
+
+    function MakeGraph2 () {
+
+        var height = 400,
+            width = 600,
+            barWidth = 50,
+            barOffset = 0;
+
+        var colors = d3.scale.linear()
+            .domain([0, barData.length])
+            .range(['#FF0000', '#0000FF'])
+
+        var yScale = d3.scale.linear()
+            .domain([0, d3.max(barData)])
+            .range([0, height ])
+
+        var xScale = d3.scale.ordinal()
+            .domain(d3.range(0, barData.length))
+            .rangeBands([0, width ])
+
+        d3.select('#graph2').append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .style('background', '#003d60' )
+            .selectAll('rect').data(barData)
+            .enter().append('rect')
+            .style('fill', function(d,i) {
+                return colors(i);
+            })
+            .attr('width', xScale.rangeBand() - barOffset)
+            .attr('height', function(d) {
+                return yScale(d);
+            })
+            .attr('x', function(d,i) {
+                return xScale(i) + barOffset/2  ;
+            })
+            .attr('y', function(d) {
+                return height - yScale(d);
+            })
+    }
+
+    function MakeGraph3() {
+
+        var height = 400,
+            width = 600,
+            barWidth = 50,
+            barOffset = 0;
+
+        var colors = d3.scale.linear()
+            .domain([ 0, barData.length * 0.2, barData.length * 0.4,
+                barData.length * 0.6, barData.length * 0.8, barData.length ])
+            .range(['#f3dc42', '#fcb322', '#f89f1c', '#fe7f4d', '#e9624d', '#b7382d'])
+
+        var yScale = d3.scale.linear()
+            .domain([0, d3.max(barData)])
+            .range([0, height ])
+
+        var xScale = d3.scale.ordinal()
+            .domain(d3.range(0, barData.length))
+            .rangeBands([0, width ])
+
+        d3.select('#graph3').append('svg')
+            .attr('width', width)
+            .attr('height', height)
+            .style('background', '#003d60' )
+            .selectAll('rect').data(barData)
+            .enter().append('rect')
+            .style('fill', function(d,i) {
+                return colors(i);
+            })
+            .attr('width', xScale.rangeBand() - barOffset)
+            .attr('height', function(d) {
+                return yScale(d);
+            })
+            .attr('x', function(d,i) {
+                return xScale(i) + barOffset/2  ;
+            })
+            .attr('y', function(d) {
+                return height - yScale(d);
+            })
+    }
+
+    function MakeGraph4(){
+
+        var w = 40,
+            h = 300;
+
+        var svg = d3.select("#graph4").append("svg:svg")
+            .attr("width", w)
+            .attr("height", h);
+
+        var gradient = svg.append("svg:defs")
+            .append("svg:linearGradient")
+            .attr("id", "gradient")
+            .attr("y1", "100%")
+            .attr("y2", "0%")
+            .attr("spreadMethod", "pad");
+
+        gradient.append("svg:stop")
+            .attr("offset", "50%")
+            .attr("stop-color", "#0079c0")
+            .attr("stop-opacity",0.5);
+
+        gradient.append("svg:stop")
+            .attr("offset", "100%")
+            .attr("stop-color", "#FFFFFF")
+            .attr("stop-opacity",0.1);
+
+
+        svg.append("svg:rect")
+            .attr("width", w)
+            .attr("height", h)
+            .style("fill", "url(#gradient)");
+    }
+
+    CARDS.barData = this.barData;
+
+    return pub;
+
+})
