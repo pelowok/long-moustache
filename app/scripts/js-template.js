@@ -34,7 +34,7 @@ CARDS.Main = (function ($) {
 
 $( window ).load(function() {
 
-
+    
 
     console.log( "window loaded" );
     console.log('CARDS.potato1 : ' + CARDS.potato1);
