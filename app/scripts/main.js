@@ -5,7 +5,7 @@
 var CARDS = CARDS || [];
 
 // We define a function that takes one parameter named $.
-CARDS.Main = (function ($) {
+CARDS.Main = (function($){
 
     // declare a variable that will be returned when the function runs.
     // This pub variable will be attached as a property to the prototype
@@ -15,42 +15,23 @@ CARDS.Main = (function ($) {
 
     var init = function () {
         console.log('CARDS.Main.init fired');
+
+        var pathToData = 'scripts/testdata.json';
+        //CARDS.BarData.initializeBarData(pathToData);
+        CARDS.Test1.Test;
     };
 
-    CARDS.potato1 = 'potato1';
-    var potato2 = 'this potato2 is never assigned to pub variable so its prviate';
-    var potato3 = 'not 1, not 2, but potato3';
-
     pub.init = init;
-    pub.potato1 = potato3;
 
     return pub;
 
 // Here we immediately call the function with jQuery as the parameter.
-}(jQuery));
-
-
-
-
-$( window ).load(function() {
-
-
-
-    console.log( "window loaded" );
-    console.log('CARDS.potato1 : ' + CARDS.potato1);
-    console.log('CARDS.potato2 : ' + CARDS.potato2);
-    console.log('CARDS.potato3 : ' + CARDS.potato3);
-    console.log('CARDS.Main.potato1 : ' + CARDS.Main.potato1);
-    console.log('CARDS.Main.potato2 : ' + CARDS.Main.potato2);
-    console.log('CARDS.Main.potato3 : ' + CARDS.Main.potato3);
-});
+}($));
 
 // Shorthand for: $( document ).ready(function(){...});
 $(function() {
 
-    console.log("document loaded");
-
+    console.log("main.js document.ready fired");
     CARDS.Main.init();
-
 
 });
